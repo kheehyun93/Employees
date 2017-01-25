@@ -1,0 +1,39 @@
+@CHARSET "UTF-8";
+	#footer a{
+		font-size: 14px;
+		text-decoration: none;
+		cursor: pointer;
+		color : #588EEF;
+		text-shadow: #999999 2px 2px 2px;
+		font-weight: bold;
+	}
+	#footer a:HOVER{
+		text-decoration: underline;
+	}
+	#article img{
+		border-radius:50%; 
+		width: 141px;
+		padding-top: 11px;
+    	padding-bottom: 15px;
+	}
+	#footer{
+		padding-top: 16px;
+	}
+	.wrap2{
+		display: none;
+	}
+	.wrap3{
+		display: none;
+	}
+	#loginBtn{
+		width: 200px;
+	}
+	#finalId{
+		font-weight: bold;
+		font-size: 20px;
+		color: #028545;
+	}
+	#article_a{
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
