@@ -60,17 +60,18 @@
 	#info{
 		color: #4285f4;
 		text-decoration: none;
+		cursor: pointer;
 	}
 	#logout{
 		color: red;
 		text-decoration: none;
+		cursor: pointer;
 	}
 	#info:HOVER {
 		text-decoration: underline;
-	
+		
 	}
 	#logout:HOVER {
 		text-decoration: underline;
-	
 	}
 }

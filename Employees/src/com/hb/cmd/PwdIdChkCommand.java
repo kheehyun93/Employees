@@ -11,6 +11,8 @@ public class PwdIdChkCommand implements Command{
 	public String exec(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("id");
 		
+		
+		
 		EmployeesDAO dao = new EmployeesDAO();
 		String result = dao.getFindId(id);
 		

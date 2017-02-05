@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" type="text/css" href="/Employees/css/login.css"/>
-<script type="text/javascript" src="/Google/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="/Employees/js/jquery-3.1.1.min.js"></script>
 <script type="text/javascript">
 	$(function() {
 		$("#id").keyup(function() {
@@ -52,13 +52,12 @@
 				$(function() {
 					$.ajax({
 						type : "post",
-						url : "/Employees/Controller",
+						url : "/Employees/LoginController",
 						data : "type=login"+"&id="+$("#id").val()+"&pwd="+$("#pwd").val(),
 						dataType : "text",
 						success : function(data) {
-							if(data != "fail"){
+							if(data.substring(0,4) != "fail"){
 								alert("로그인 성공");
-								alert(data);
 								location.href=data;
 							}else{
 								alert("일치하는 정보가 없습니다.");
@@ -84,13 +83,12 @@
 					$(function() {
 						$.ajax({
 							type : "post",
-							url : "/Employees/Controller",
+							url : "/Employees/LoginController",
 							data : "type=login"+"&id="+$("#id").val()+"&pwd="+$("#pwd").val(),
 							dataType : "text",
 							success : function(data) {
-								if(data != "fail"){
+								if(data.substring(0,4) != "fail"){
 									alert("로그인 성공");
-									alert(data)
 									location.href=data;
 								}else{
 									alert("일치하는 정보가 없습니다.");
@@ -125,7 +123,7 @@
 					<input type="password" name="pwd" id="pwd" class="inputText" placeholder="비밀번호 입력"/><br/>
 					<input type="button" value="로그인" class="inputBtn" id="loginBtn"/><br/>
 					<div id="f_a">
-						<a class="find_a" href="FindId.jsp">사원번호</a>&nbsp;<a id="find_a">/</a>&nbsp;<a class="find_a" href="FindPwd.jsp">비밀번호 찾기</a>
+						<a class="find_a" href="FindId.jsp">사원번호</a>&nbsp;<a id="find_a">/</a>&nbsp;<a class="find_a" href="../[login]/FindPwd.jsp">비밀번호 찾기</a>
 					</div>
 				</form>
 			</div>

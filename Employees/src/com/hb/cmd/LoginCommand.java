@@ -10,7 +10,7 @@ import com.hb.vo.EmployeesVO;
 public class LoginCommand implements Command{
 
 	@Override
-	public String exec(HttpServletRequest request, HttpServletResponse response) {
+	public String exec(HttpServletRequest request, HttpServletResponse response){
 		String id = request.getParameter("id");
 		String pwd = request.getParameter("pwd");
 		
@@ -21,10 +21,10 @@ public class LoginCommand implements Command{
 		
 		EmployeesDAO dao = new EmployeesDAO();
 		
+		
+
+		
 		evo = dao.loginCheck(id,pwd);
-		
-		
-		System.out.println(evo.getE_name());
 		
 		String result = null;
 		
@@ -32,7 +32,7 @@ public class LoginCommand implements Command{
 			result="fail";
 		}else{
 			session.setAttribute("empInfo", evo);
-			result = "Main.jsp";
+			result = "../[menu]/Main.jsp";
 		}
 		
 		return result;

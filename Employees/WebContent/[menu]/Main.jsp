@@ -6,7 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-<script type="text/javascript" src="/Google/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="/Employees/js/jquery-3.1.1.min.js"></script>
 <style type="text/css">
 	.sectionWrap{
 		margin-left: 244px;
@@ -19,15 +19,17 @@
 <body>
 	<div>
 		<c:choose>
-			<c:when test="${empInfo.e_dept} eq '관리팀'">
+			<c:when test="${empInfo.e_dept eq '관리팀'}">
 				<div>	
-					<%@ include file="Menu.jsp" %>
+					<%-- <%@ include file="/Employees/WebContent/[employees]/AdminMenu.jsp" %> --%>
+					<jsp:include page="AdminMenu.jsp" />
 				</div>
 			</c:when>
 			
 			<c:otherwise>
 				<div>
-					<%@ include file="AdminMenu.jsp" %>
+					<%-- <%@ include file="Menu.jsp" %> --%>
+					<jsp:include page="Menu.jsp" />
 				</div>
 			</c:otherwise>
 		</c:choose>
