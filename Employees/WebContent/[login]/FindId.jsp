@@ -10,6 +10,11 @@
 <link rel="stylesheet" type="text/css" href="/Employees/css/find.css"/>
 <script type="text/javascript" src="/Employees/js/jquery-3.1.1.min.js"></script>
 <script type="text/javascript">
+// 뒤로가기버튼 제어
+history.pushState(null, null, location.href); 
+window.onpopstate = function(event) { 
+	history.go(1); 
+}
 	$(function() {
 
 		$("#input").keyup(function() {

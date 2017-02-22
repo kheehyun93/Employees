@@ -6,33 +6,10 @@
 <head>
 <%-- <jsp:useBean id="empInfo" class="com.hb.vo.EmployeesVO" scope="session"/>
 <jsp:setProperty property="*" name="empInfo"/> --%>
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="/Employees/css/list.css"/>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-<style type="text/css">
-	.sectionWrap{
-		margin-left: 244px;
-		margin-top: -96px;
-	}
-	.sectionWrap img{
-		width: 1250px;
-	}
-	.paging{
-		list-style: none;
-	}
-	.paging li {
-		float: left;
-		
-	}
-	.paging li a{
-		padding: 3px 7px;
-	}
-	table{
-		border-right:none;
-		border-left:none;
-		border-top:none;
-		border-bottom:none;
-	}
-</style>
 <script type="text/javascript" src="../Employees/js/jquery-3.1.1.min.js"></script>
 
 <script type="text/javascript">
@@ -43,9 +20,23 @@
 			location.href="/Employees/EmpController?type=empOnelist&id="+id;
 		});
 		
+		var rank = "${requestScope.e_rank }";
+		var dept = "${requestScope.e_dept }";
+		
+		if(rank!=""){
+			$("#rank").val(rank);
+		}
+		if(dept!=""){
+			$("#deptCategory").val(dept);
+		}
+		
 		$("#emp_search").click(function() {
 			$("#searchForm").attr("action","/Employees/EmpController?type=empSearch").attr("method", "post").submit();
+
 		});
+		
+		
+		
 	});
 	
 </script>
@@ -72,11 +63,11 @@
 	<div class="sectionWrap">
 		<h1>사원 목록</h1>
 		<hr/>
-		<div>
+		<div id="searchFormWrap">
 			<form id="searchForm">
-				<label>직급</label>
-				<select name="rankCategory">
-					<option value="">전체</option>
+				<label class="f_lable">직급</label>
+				<select id="rank" name="rankCategory" class="select">
+					<option value="" selected="selected">전체</option>
 					<option value="사장">사장</option>
 					<option value="전무">전무</option>
 					<option value="상무">상무</option>
@@ -87,9 +78,9 @@
 					<option value="사원">사원</option>
 				</select>
 				 &nbsp;&nbsp;&nbsp;
-				<label>부서</label>
-				<select name="deptCategory">
-					<option value="">전체</option>
+				<label class="f_lable">부서</label>
+				<select id="deptCategory" name="deptCategory" class="select">
+					<option value="" selected="selected">전체</option>
 					<option value="개발 1팀">개발 1팀</option>
 					<option value="개발 2팀">개발 2팀</option>
 					<option value="빅데이타팀">빅데이타팀</option>
@@ -97,14 +88,14 @@
 					<option value="해당없음">해당없음</option>
 				</select>
 				&nbsp;&nbsp;&nbsp; 
-				<input type="text" name="e_name" placeholder="이름 입력"/> &nbsp;&nbsp;&nbsp; 
-				<input type="text" name="e_tel" placeholder="전화번호 입력"/> &nbsp;&nbsp;&nbsp; 
+				<input type="text" name="e_name" class="inputText" value="${param.e_name }" placeholder="이름 입력"/> &nbsp;&nbsp;&nbsp; 
+				<input type="text" name="e_tel" class="inputText" value="${param.e_tel }" placeholder="전화번호 입력"/> &nbsp;&nbsp;&nbsp; 
 				<input type="button" value="검색" id="emp_search"/>
 			</form>
 		</div>
 	
 		<div class="t_wrap">
-			<table>
+			<table style="width: 737px;">
 				<thead>
 					<tr>
 						<th>사번</th>
@@ -122,6 +113,18 @@
 								<tr onmouseover="this.style.background='#E1E1E1'" onmouseout="this.style.background='white'">
 									<td class = "td_id">${k.e_id}</td>
 									<td>${k.e_name}</td>
+									<td>${k.e_jumin.substring(0,6)}</td>
+									<td>${k.e_tel}</td>
+									<td>${k.e_rank}</td>
+									<td>${k.e_dept}</td>
+								</tr>
+							</c:forEach>
+						</c:when>
+						<c:when test="${!empty empSearchList }">
+							<c:forEach items="${empSearchList}" var="k">
+								<tr onmouseover="this.style.background='#E1E1E1'" onmouseout="this.style.background='white'">
+									<td class = "td_id">${k.e_id}</td>
+									<td>${k.e_name}</td>
 									<td>${k.e_jumin.substring(0,7)}</td>
 									<td>${k.e_tel}</td>
 									<td>${k.e_rank}</td>
@@ -136,10 +139,12 @@
 						</c:otherwise>
 					</c:choose>
 				</tbody>
-				<tfoot>
-					<tr style="text-align: center;">
+				<c:choose>
+				<c:when test="${!empty empList }">
+				<tfoot class="t_foot">
+					<tr style="text-align: center; font-size: 14px;">
 						<td colspan="6">
-							<ul class="paging">
+							<ul class="paging" style="margin-left: 218px;">
 								<c:choose>
 									<c:when test="${pvo.beginPage<pvo.pagePerBlock}">
 										<li class="disable">이전으로</li>
@@ -172,6 +177,8 @@
 						</td>
 					</tr>
 				</tfoot>
+				</c:when>
+				</c:choose>
 			</table>
 		</div>
 	</div>

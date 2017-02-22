@@ -10,6 +10,11 @@
 <link rel="stylesheet" type="text/css" href="/Employees/css/find.css"/>
 <script type="text/javascript" src="/Employees/js/jquery-3.1.1.min.js"></script>
 <script type="text/javascript">
+// 뒤로가기 버튼 제어
+history.pushState(null, null, location.href); 
+window.onpopstate = function(event) { 
+	history.go(1); 
+}
 	$(function() {
 		
 		$("#id").keyup(function() {
@@ -34,10 +39,10 @@
 			
 			for (var i = 0; i < input_length; i++) {
 				chk = input.value.charCodeAt(i);
-				if((chk>=65 && chk<=90) || (chk>=97 && chk<=122) || (chk>=48 && chk<=57) || (chk==64)){
+				if((chk>=65 && chk<=90) || (chk>=97 && chk<=122) || (chk>=48 && chk<=57) || (chk==64) || (chk==95)){
 					
 				}else{
-					alert("@ 외 특수문자나 한글은 입력할 수 없습니다.");
+					alert(" _ , @ 외 특수문자나 한글은 입력할 수 없습니다.");
 					input.value="";
 					return;
 				}
@@ -77,6 +82,7 @@
 		});
 		
 		$("#confirmBtn").click(function() {
+			alert($("#email").val());
 			if($("#email").val()==""){
 				alert("이메일을 입력해주세요~");
 			}else{
@@ -108,7 +114,6 @@
 									}
 								}
 								
-								alert(email);
 								$("#finalId").html(email);
 							}else{
 								alert("이메일이 올바르지 않습니다.");
@@ -191,7 +196,7 @@
 				</div>
 			</div>
 			<div id="footer">
-				<a href="../[login]/Login.jsp">로그인</a>
+				<a href="/Employees/[login]/Login.jsp">로그인</a>
 			</div>
 		</div>
 	
@@ -218,7 +223,7 @@
 				</div>
 			</div>
 			<div id="footer">
-				<a href="../[login]/FindPwd.jsp">비밀번호 찾기</a>
+				<a href="/Employees/[login]/FindPwd.jsp">비밀번호 찾기</a>
 			</div>
 		</div>
 	</div>

@@ -32,7 +32,7 @@ public class LoginCommand implements Command{
 			result="fail";
 		}else{
 			session.setAttribute("empInfo", evo);
-			result = "../[menu]/Main.jsp";
+			result = "/Employees/[menu]/Main.jsp";
 		}
 		
 		return result;

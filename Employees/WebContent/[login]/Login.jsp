@@ -8,6 +8,11 @@
 <link rel="stylesheet" type="text/css" href="/Employees/css/login.css"/>
 <script type="text/javascript" src="/Employees/js/jquery-3.1.1.min.js"></script>
 <script type="text/javascript">
+//뒤로가기버튼 제어
+history.pushState(null, null, location.href); 
+window.onpopstate = function(event) { 
+	history.go(1); 
+}
 	$(function() {
 		$("#id").keyup(function() {
 			var chk;
@@ -19,7 +24,7 @@
 				if(chk>=48 && chk<=57){
 					
 				}else{
-					alert("사원번호는 숫자만 입력해주세요.")
+					alert("사원번호는 숫자만 입력해주세요.");
 					id.value="";
 					return;
 				}
@@ -123,7 +128,7 @@
 					<input type="password" name="pwd" id="pwd" class="inputText" placeholder="비밀번호 입력"/><br/>
 					<input type="button" value="로그인" class="inputBtn" id="loginBtn"/><br/>
 					<div id="f_a">
-						<a class="find_a" href="FindId.jsp">사원번호</a>&nbsp;<a id="find_a">/</a>&nbsp;<a class="find_a" href="../[login]/FindPwd.jsp">비밀번호 찾기</a>
+						<a class="find_a" href="/Employees/[login]/FindId.jsp">사원번호</a>&nbsp;<a id="find_a">/</a>&nbsp;<a class="find_a" href="/Employees/[login]/FindPwd.jsp">비밀번호 찾기</a>
 					</div>
 				</form>
 			</div>

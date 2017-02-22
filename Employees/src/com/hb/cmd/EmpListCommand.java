@@ -40,6 +40,8 @@ public class EmpListCommand implements Command{
 		map.put("begin", pvo.getBegin());
 		map.put("end", pvo.getEnd());
 		
+		System.out.println("begin end"+pvo.getBegin()+pvo.getEnd());
+		
 		// 사원정보 불러오기		
 		List<EmployeesVO> list = dao.getEmployessList(map);
 		request.setAttribute("empList", list);

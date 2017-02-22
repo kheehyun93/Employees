@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import com.hb.vo.ProjectJoinVO;
 public class EmployeesDAO {
 	Connection conn;
 	PreparedStatement pstmt;
+	Statement stmt;
 	ResultSet rs;
 	DataSource ds;
 	
@@ -197,14 +199,15 @@ public class EmployeesDAO {
 		return result;
 	}
 	
-	public String getPwdEmail(String id){
+	public String getPwdEmail(String id,String email){
 		String e_email = null;
 		String result = null;
 		
 		try {
-			String sql = "select e_email from employees where e_id=?";
+			String sql = "select e_email from employees where e_id=? and e_email = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, id);
+			pstmt.setString(2, email);
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()){
@@ -258,7 +261,7 @@ public class EmployeesDAO {
 		
 		try {
 			String sql = "select * from (select rownum r_num, a.* from (select * from employees where e_state = ? "
-					+ "order by e_hire_date) a ) where r_num between ? and ?";
+					+ "order by e_hire_date) a ) where r_num between ? and ? ";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, e_state);
 			pstmt.setInt(2, begin);
@@ -440,4 +443,140 @@ public class EmployeesDAO {
 		}
 		return null;
 	}
+	
+	public int getEmpIdx(){
+		int e_idx = 0;
+		try {
+			String sql = "select max(e_idx) from employees";
+			//String sql = "select last_number from user_sequences where sequence_name= UPPER('emp_seq')";
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			if(rs.next()){
+				e_idx = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("getEmpIdx 에러 : "+e);
+		}finally {
+			if(rs!=null)try {rs.close();} catch (SQLException sql) {}
+			if(stmt!=null)try {stmt.close();} catch (SQLException sql) {}
+			if(conn!=null)try {conn.close();} catch (SQLException sql) {}
+		}
+		return e_idx;
+	}
+	
+	// 사원 등록
+	public boolean EmployeesInsert(EmployeesVO evo){
+		int result = 0;
+		try {
+			String sql = "insert into employees values(?,emp_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,"+0+")";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, evo.getE_id());
+			pstmt.setString(2, evo.getE_name());
+			pstmt.setString(3, evo.getE_jumin());
+			pstmt.setString(4, evo.getE_email());
+			pstmt.setString(5, evo.getE_tel());
+			pstmt.setString(6, evo.getE_addr());
+			pstmt.setString(7, evo.getE_post());
+			pstmt.setString(8, evo.getE_rank());
+			pstmt.setString(9, evo.getE_dept());
+			pstmt.setString(10, evo.getE_hire_date());
+			pstmt.setString(11, evo.getE_img());
+			pstmt.setString(12, evo.getE_pwd());
+			result = pstmt.executeUpdate();
+			
+			if(result==0){
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("EmployeesInsert 에러 : "+e);
+		}finally {
+			if(rs!=null)try {rs.close();} catch (SQLException sql) {}
+			if(stmt!=null)try {stmt.close();} catch (SQLException sql) {}
+			if(conn!=null)try {conn.close();} catch (SQLException sql) {}
+		}
+		return false;
+	}
+	
+	// 퇴사 처리
+	public String empDel(String e_id){
+		int result = 0;
+		try {
+			String sql = "update employees set e_state="+1+" where e_id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, e_id);
+			
+			result = pstmt.executeUpdate();
+			
+			if(result==0){
+				return "fail";
+			}
+			return "/Employees/EmpController?type=empList";
+			
+		} catch (Exception e) {
+			System.out.println("empDel 에러 : "+e);
+		}finally {
+			if(rs!=null)try {rs.close();} catch (SQLException sql) {}
+			if(pstmt!=null)try {pstmt.close();} catch (SQLException sql) {}
+			if(conn!=null)try {conn.close();} catch (SQLException sql) {}
+		}
+		return "fail";
+	}
+	
+	// 회원 수정 EmployeesUpdate
+	public boolean EmployeesUpdate(EmployeesVO evo){
+		int result = 0;
+		try {
+			String sql = "update employees set e_name=? ,e_email=? ,e_tel=? ,e_addr=? ,e_post=? ,e_rank=? ,e_dept=?,e_img=?  where e_id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, evo.getE_name());
+			pstmt.setString(2, evo.getE_email());
+			pstmt.setString(3, evo.getE_tel());
+			pstmt.setString(4, evo.getE_addr());
+			pstmt.setString(5, evo.getE_post());
+			pstmt.setString(6, evo.getE_rank());
+			pstmt.setString(7, evo.getE_dept());
+			pstmt.setString(8, evo.getE_img());
+			pstmt.setString(9, evo.getE_id());
+			
+			result = pstmt.executeUpdate();
+			
+			if(result==0){
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("EmployeesUpdate 에러 : "+e);
+		}finally {
+			if(rs!=null)try {rs.close();} catch (SQLException sql) {}
+			if(pstmt!=null)try {pstmt.close();} catch (SQLException sql) {}
+			if(conn!=null)try {conn.close();} catch (SQLException sql) {}
+		}
+		return false;
+	}
+	
+	// 주민번호 체크
+	public String getChkJumin(String jumin){
+		String result = null;
+		try {
+			String sql = "select e_jumin from employees where e_jumin=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, jumin);
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				result = rs.getString(1);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("getChkJumin 에러 : "+e);
+		}finally {
+			if(rs!=null)try {rs.close();} catch (SQLException sql) {}
+			if(pstmt!=null)try {pstmt.close();} catch (SQLException sql) {}
+			if(conn!=null)try {conn.close();} catch (SQLException sql) {}
+		}
+		return result;
+	}
+	
 }	

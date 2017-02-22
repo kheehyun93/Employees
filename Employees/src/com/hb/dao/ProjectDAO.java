@@ -14,6 +14,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import com.hb.vo.EmployeesVO;
+import com.hb.vo.MasterVO;
 import com.hb.vo.ProEmpJoinVO;
 import com.hb.vo.ProjectJoinVO;
 import com.hb.vo.ProjectVO;
@@ -41,7 +42,7 @@ public class ProjectDAO {
 		List<ProjectJoinVO> list = new ArrayList<>();
 		ProjectJoinVO pro = null;
 		try {
-			String sql = "select p.p_name,p.p_content,m.m_start,m.m_end,m.m_task,p.p_order,m.m_etc from master m, project p where m.p_code = p.p_code and e_id = ?";
+			String sql = "select p.p_name,p.p_content,m.m_start,m.m_end,m.m_task,p.p_order,m.m_etc,p.p_code,p.p_start,p.p_end,p.p_state from master m, project p where m.p_code = p.p_code and e_id = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
@@ -56,8 +57,12 @@ public class ProjectDAO {
 				if(rs.getString(7)==null){
 					pro.setM_etc("");
 				}else{
-					pro.setM_start(rs.getString(7));
+					pro.setM_etc(rs.getString(7));
 				}
+				pro.setP_code(rs.getString(8));
+				pro.setP_start(rs.getString(9));
+				pro.setP_end(rs.getString(10));
+				pro.setP_state(rs.getString(11));
 				list.add(pro);
 			}
 			
@@ -77,7 +82,7 @@ public class ProjectDAO {
 		int result = 0;
 		int num = 0;
 		try {
-			String sql = "insert into project values(pro_seq.nextval,?,?,?,?,?,?)";
+			String sql = "insert into project values(pro_seq.nextval,?,?,?,?,?,?,"+0+")";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, pvo.getP_name());
 			pstmt.setString(2, pvo.getP_content());
@@ -91,7 +96,7 @@ public class ProjectDAO {
 				return "fail";
 			}
 			
-			return "/Employees/Controller?type=proList";
+			return "/Employees/ProController?type=proList";
 		} catch (Exception e) {
 			System.out.println("projectInsert 에러 : "+e);
 		}finally {
@@ -106,7 +111,7 @@ public class ProjectDAO {
 	public int proTotalCount(){
 		int count = 0;
 		try {
-			String sql = "select count(*) from project";
+			String sql = "select count(*) from project where p_state = "+0;
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			if(rs.next()){
@@ -128,7 +133,7 @@ public class ProjectDAO {
 		int end = map.get("end");
 		
 		try {
-			String sql = "select * from (select rownum r_num, a.* from ( select * from project order by p_start) a ) where r_num between ? and ?";
+			String sql = "select * from (select rownum r_num, a.* from ( select * from project where p_state = "+0+" order by p_start ) a ) where r_num between ? and ? ";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, begin);
 			pstmt.setInt(2, end);
@@ -250,7 +255,7 @@ public class ProjectDAO {
 		String p_end = map.get("p_end");
 		
 		try {
-			String sql = "select * from project where p_name like '%' || ? || '%' and p_order like '%' || ? || '%' and p_end <= ?";
+			String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_end <= ? and p_state ="+0;
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, p_name);
 			pstmt.setString(2, p_order);
@@ -280,19 +285,21 @@ public class ProjectDAO {
 	}
 	
 	//2. p_start 값이 있을때
-	public List<ProjectVO> proSearchStart(Map<String, String> map){
+	public List<ProjectVO> proSearchOr(Map<String, String> map){
 		List<ProjectVO> list = new ArrayList<>();
 		ProjectVO pvo = null;
 		String p_name = map.get("p_name");
 		String p_order = map.get("p_order");
 		String p_start = map.get("p_start");
+		String p_end = map.get("p_end");
 		
 		try {
-			String sql = "select * from project where p_name like '%' || ? || '%' and p_order like '%' || ? || '%' and p_start >= ?";
+			String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and (p_start >= ? or p_end <= ?) and p_state ="+0;
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, p_name);
 			pstmt.setString(2, p_order);
 			pstmt.setString(3, p_start);
+			pstmt.setString(4, p_end);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
@@ -308,7 +315,7 @@ public class ProjectDAO {
 			}
 			
 		} catch (Exception e) {
-			System.out.println("proSearchStart 에러 : "+e);
+			System.out.println("proSearchOr 에러 : "+e);
 		}finally {
 			if(rs!=null)try {rs.close();} catch (SQLException sql) {}
 			if(pstmt!=null)try {pstmt.close();} catch (SQLException sql) {}
@@ -325,7 +332,7 @@ public class ProjectDAO {
 		String p_order = map.get("p_order");
 		
 		try {
-			String sql = "select * from project where p_name like '%' || ? || '%' and p_order like '%' || ? || '%' ";
+			String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_state="+0;
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, p_name);
 			pstmt.setString(2, p_order);
@@ -363,7 +370,7 @@ public class ProjectDAO {
 		String p_end = map.get("p_end");
 		
 		try {
-			String sql = "select * from project where p_name like '%' || ? || '%' and p_order like '%' || ? || '%' and p_start >= ? and p_end <= ?";
+			String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_start >= ? and p_end <= ? and p_state="+0;
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, p_name);
 			pstmt.setString(2, p_order);
@@ -391,5 +398,121 @@ public class ProjectDAO {
 			if(conn!=null)try {conn.close();} catch (SQLException sql) {}
 		}
 		return list;
+	}
+	
+	//  프로젝트 인원 업데이트
+	public boolean projectNumUpdate(int p_code){
+		int result = 0;
+		try {
+			String sql = "update project set p_num = (select count(*) from master where p_code = ?) where p_code=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, p_code);
+			pstmt.setInt(2, p_code);
+			
+			result = pstmt.executeUpdate();
+
+			if(result==0){
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("projectNumUpdate 에러 : "+e);
+		}
+		return false;
+	}
+	
+	// 프로젝트 직접 입력 등록
+	public boolean projectDirectInsert(ProjectVO pvo){
+		int result = 0;
+		int num = 1;
+		try {
+			String sql = "insert into project values(pro_seq.nextval,?,?,?,?,?,?,"+1+")";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, pvo.getP_name());
+			pstmt.setString(2, pvo.getP_content());
+			pstmt.setString(3, pvo.getP_start());
+			pstmt.setString(4, pvo.getP_end());
+			pstmt.setInt(5, num);
+			pstmt.setString(6, pvo.getP_order());
+			result = pstmt.executeUpdate();
+			
+			if(result==0){
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("projectDirectInsert 에러 : "+e);
+		}
+		return false;
+	}
+	
+	public int getP_code(){
+		int p_code = 0;
+		try {
+			String sql = "select max(p_code) from project";
+			//String sql = "select last_number from user_sequences where sequence_name= UPPER('emp_seq')";
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			if(rs.next()){
+				p_code = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("getP_code 에러 : "+e);
+		}
+		return p_code;
+	}
+	public void close(){
+		if(rs!=null)try {rs.close();} catch (SQLException sql) {}
+		if(pstmt!=null)try {pstmt.close();} catch (SQLException sql) {}
+		if(conn!=null)try {conn.close();} catch (SQLException sql) {}
+	}
+	
+	// 프로젝트 수정
+	public boolean projectDirectUpdate(ProjectVO pvo){
+		int result = 0;
+		try {
+			String sql = "update project set p_name=?,p_content=?,p_start=?,p_end=?,p_order=? where p_code=?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, pvo.getP_name());
+			pstmt.setString(2, pvo.getP_content());
+			pstmt.setString(3, pvo.getP_start());
+			pstmt.setString(4, pvo.getP_end());
+			pstmt.setString(5, pvo.getP_order());
+			pstmt.setInt(6, pvo.getP_code());
+			result = pstmt.executeUpdate();
+			
+			if(result==0){
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("projectDirectUpdate 에러 : "+e);
+		}
+		return false;
+	}
+	
+	// 프로젝트 삭제
+	public boolean empProjectDel(int p_code){
+		int result = 0;
+		try {
+			String sql = "delete from project where p_code = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, p_code);
+			
+			result = pstmt.executeUpdate();
+			
+			if(result==0){
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("empProjectDel 에러 : "+e);
+		}
+		return false;
 	}
 }

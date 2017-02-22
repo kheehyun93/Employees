@@ -11,6 +11,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import com.hb.vo.CareerVO;
+import com.hb.vo.EmployeesVO;
 import com.hb.vo.LicenseVO;
 
 public class LicenseDAO {
@@ -58,4 +60,78 @@ public class LicenseDAO {
 		}
 		return list;
 	}
+	
+	// 자격증 insert LicenseInsert
+	public boolean LicenseInsert(LicenseVO lvo){
+		int result = 0;
+		try {
+			String sql = "insert into license values(lic_seq.nextval,?,?,?)";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, lvo.getE_id());
+			pstmt.setString(2, lvo.getL_name());
+			pstmt.setString(3, lvo.getL_date());
+			result = pstmt.executeUpdate();
+			
+			if(result==0){
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("LicenseInsert 에러 : "+e);
+		}
+		return false;
+	}
+	public void close(){
+		if(rs!=null)try {rs.close();} catch (SQLException sql) {}
+		if(pstmt!=null)try {pstmt.close();} catch (SQLException sql) {}
+		if(conn!=null)try {conn.close();} catch (SQLException sql) {}
+	}
+	
+	// 자격증 수정
+	public boolean LicenseUpdate(LicenseVO lvo){
+		int result = 0;
+		try {
+			String sql = "update license set l_name=?,l_date=? where e_id=? and l_idx=?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, lvo.getL_name());
+			pstmt.setString(2, lvo.getL_date());
+			pstmt.setString(3, lvo.getE_id());
+			pstmt.setInt(4, lvo.getL_idx());
+			
+			result = pstmt.executeUpdate();
+			
+			if(result==0){
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("LicenseUpdate 에러 : "+e);
+		}
+		return false;
+	}
+	
+	// 자격증 삭제
+	public boolean LicenseDel(int l_idx){
+		int result = 0;
+		try {
+			String sql = "delete from license where l_idx = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, l_idx);
+			
+			result = pstmt.executeUpdate();
+			
+			if(result==0){
+				return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("LicenseDel 에러 : "+e);
+		}
+		return false;
+	}
+	
 }

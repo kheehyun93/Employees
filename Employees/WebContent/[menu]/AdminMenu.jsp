@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" type="text/css" href="/Employees/css/menu.css"/>
@@ -28,14 +29,15 @@
 				<a class="topList">사원 정보</a>
 				<div class="bottomList">
 					<a class="list" href="/Employees/EmpController?type=empList">사원 목록</a><br/>
-					<a class="list">사원 등록</a><br/>
+					<a class="list" href="/Employees/EmpController?type=empAdd_go">사원 등록</a><br/>
+					<!-- <a class="list" href="/Employees/[employees]/EmployeesAdd2.jsp">사원 등록</a><br/> -->
 				</div>
 			</div>
 			<div id="pro">
 				<a class="topList">프로젝트 정보</a>
 				<div class="bottomList">
 					<a class="list" href="/Employees/ProController?type=proList">프로젝트 목록</a><br/>
-					<a class="list" href="../[project]/ProjectAdd.jsp">프로젝트 등록</a><br/>
+					<a class="list" href="/Employees/[project]/ProjectAdd.jsp">프로젝트 등록</a><br/>
 				</div>
 			</div>
 			
