@@ -15,7 +15,6 @@
 <script type="text/javascript">
 	$(function() {
 		$('td').dblclick(function() {
-			alert("안녕");
 			var id = $(this).closest("tr").find(".td_id").text();
 			location.href="/Employees/EmpController?type=empOnelist&id="+id;
 		});
@@ -171,6 +170,46 @@
 									</c:when>
 									<c:otherwise>
 										<li><a href="/Employees/EmpController?type=empList&cPage=${pvo.beginPage+pvo.pagePerBlock}">다음으로</a></li>
+									</c:otherwise>
+								</c:choose>
+							</ul>
+						</td>
+					</tr>
+				</tfoot>
+				</c:when>
+				</c:choose>
+				<c:choose>
+				<c:when test="${!empty empSearchList }">
+				<tfoot class="t_foot">
+					<tr style="text-align: center; font-size: 14px;">
+						<td colspan="6">
+							<ul class="paging" style="margin-left: 218px;">
+								<c:choose>
+									<c:when test="${pvo.beginPage<pvo.pagePerBlock}">
+										<li class="disable">이전으로</li>
+									</c:when>
+									<c:otherwise>
+										<li><a href="/Employees/EmpController?type=empSearch&cPage=${pvo.beginPage-pvo.pagePerBlock}&rankCategory=${requestScope.e_rank}&deptCategory=${requestScope.e_dept}&e_name=${param.e_name}&e_tel=${param.e_tel}">이전으로</a></li>
+									</c:otherwise>
+								</c:choose>
+								
+								<c:forEach var="k" begin="${pvo.beginPage}" end="${pvo.endPage}" step="1">
+									<c:choose>
+										<c:when test="${k==pvo.nowPage}">
+											<li class="now">${k}</li>
+										</c:when>
+										<c:otherwise>
+											<li><a href="/Employees/EmpController?type=empSearch&cPage=${k}&rankCategory=${requestScope.e_rank}&deptCategory=${requestScope.e_dept}&e_name=${param.e_name}&e_tel=${param.e_tel}">${k}</a></li>
+										</c:otherwise>
+									</c:choose>
+								</c:forEach>
+								
+								<c:choose>
+									<c:when test="${pvo.endPage>=pvo.totalPage}">
+										<li class="disable">다음으로</li>
+									</c:when>
+									<c:otherwise>
+										<li><a href="/Employees/EmpController?type=empSearch&cPage=${pvo.beginPage+pvo.pagePerBlock}&rankCategory=${requestScope.e_rank}&deptCategory=${requestScope.e_dept}&e_name=${param.e_name}&e_tel=${param.e_tel}">다음으로</a></li>
 									</c:otherwise>
 								</c:choose>
 							</ul>

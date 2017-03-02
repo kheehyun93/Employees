@@ -22,7 +22,6 @@ public class EmpListCommand implements Command{
 		
 		// list 무조건 cPage 부터 받기.
 		// cPage 는 현재 페이지를 변경함. null 이면 현재페이지가 기본값 1이 된다.
-		
 		String cPage = request.getParameter("cPage");
 		if(cPage != null){
 			pvo.setNowPage(Integer.parseInt(cPage));
@@ -39,8 +38,6 @@ public class EmpListCommand implements Command{
 		Map<String, Integer> map = new HashMap<>();
 		map.put("begin", pvo.getBegin());
 		map.put("end", pvo.getEnd());
-		
-		System.out.println("begin end"+pvo.getBegin()+pvo.getEnd());
 		
 		// 사원정보 불러오기		
 		List<EmployeesVO> list = dao.getEmployessList(map);

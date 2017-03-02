@@ -21,14 +21,12 @@
 		<c:choose>
 			<c:when test="${empInfo.e_dept eq '관리팀'}">
 				<div>	
-					<%-- <%@ include file="/Employees/WebContent/[employees]/AdminMenu.jsp" %> --%>
 					<jsp:include page="AdminMenu.jsp" />
 				</div>
 			</c:when>
 			
 			<c:otherwise>
 				<div>
-					<%-- <%@ include file="Menu.jsp" %> --%>
 					<jsp:include page="Menu.jsp" />
 				</div>
 			</c:otherwise>

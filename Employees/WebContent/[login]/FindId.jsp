@@ -23,10 +23,10 @@ window.onpopstate = function(event) {
 			
 			for (var i = 0; i < input_length; i++) {
 				chk = input.value.charCodeAt(i);
-				if((chk>=65 && chk<=90) || (chk>=97 && chk<=122) || (chk>=48 && chk<=57) || (chk==64)){
+				if((chk>=65 && chk<=90) || (chk>=97 && chk<=122) || (chk>=48 && chk<=57) || (chk==64)|| (chk==46)|| (chk==95)){
 					
 				}else{
-					alert("@ 외 특수문자나 한글은 입력할 수 없습니다.");
+					alert(" '.' , '@' , '_' 외 특수문자나 한글은 입력할 수 없습니다.");
 					input.value="";
 					return;
 				}
@@ -43,6 +43,11 @@ window.onpopstate = function(event) {
 					
 				}else{
 					alert("잘못된 형식입니다.");
+					jumin.value="";
+					return;
+				}
+				if(jumin_length>13){
+					alert("더이상 입력할 수 없습니다.");
 					jumin.value="";
 					return;
 				}
@@ -95,7 +100,6 @@ window.onpopstate = function(event) {
 								+"&name="+$("#name").val()+"&jumin="+$("#jumin").val(),
 						dataType : "text",
 						success : function(data) {
-							alert(data);
 							if(data.substring(0,4)=="find"){
 								$(".wrap2").hide();
 								$(".wrap3").show();

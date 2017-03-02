@@ -42,7 +42,7 @@ public class ProjectDAO {
 		List<ProjectJoinVO> list = new ArrayList<>();
 		ProjectJoinVO pro = null;
 		try {
-			String sql = "select p.p_name,p.p_content,m.m_start,m.m_end,m.m_task,p.p_order,m.m_etc,p.p_code,p.p_start,p.p_end,p.p_state from master m, project p where m.p_code = p.p_code and e_id = ?";
+			String sql = "select p.p_name,p.p_content,m.m_start,m.m_end,m.m_task,p.p_order,m.m_etc,p.p_code,p.p_start,p.p_end,p.p_state from master m, project p where m.p_code = p.p_code and e_id = ? order by m.m_end";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
@@ -285,7 +285,7 @@ public class ProjectDAO {
 	}
 	
 	//2. p_start 값이 있을때
-	public List<ProjectVO> proSearchOr(Map<String, String> map){
+	public List<ProjectVO> proSearchOr(Map<String, String> map,Map<String, Integer> map2){
 		List<ProjectVO> list = new ArrayList<>();
 		ProjectVO pvo = null;
 		String p_name = map.get("p_name");
@@ -293,24 +293,30 @@ public class ProjectDAO {
 		String p_start = map.get("p_start");
 		String p_end = map.get("p_end");
 		
+		int begin = map2.get("begin");
+		int end = map2.get("end");
+		//
 		try {
-			String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and (p_start >= ? or p_end <= ?) and p_state ="+0;
+			//String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and (p_start >= ? or p_end <= ?) and p_state =0;
+			String sql = "select * from (select rownum r_num, a.* from (select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and (p_start >= ? or p_end <= ?) and p_state =0 ) a ) where r_num between ? and ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, p_name);
 			pstmt.setString(2, p_order);
 			pstmt.setString(3, p_start);
 			pstmt.setString(4, p_end);
+			pstmt.setInt(5, begin);
+			pstmt.setInt(6, end);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
 				pvo = new ProjectVO();
-				pvo.setP_code(rs.getInt(1));
-				pvo.setP_name(rs.getString(2));
-				pvo.setP_content(rs.getString(3));
-				pvo.setP_start(rs.getString(4));
-				pvo.setP_end(rs.getString(5));
-				pvo.setP_num(rs.getInt(6));
-				pvo.setP_order(rs.getString(7));
+				pvo.setP_code(rs.getInt(2));
+				pvo.setP_name(rs.getString(3));
+				pvo.setP_content(rs.getString(4));
+				pvo.setP_start(rs.getString(5));
+				pvo.setP_end(rs.getString(6));
+				pvo.setP_num(rs.getInt(7));
+				pvo.setP_order(rs.getString(8));
 				list.add(pvo);
 			}
 			
@@ -325,28 +331,33 @@ public class ProjectDAO {
 	}
 	
 	//3. 둘다 null 값일때
-	public List<ProjectVO> proSearchNull(Map<String, String> map){
+	public List<ProjectVO> proSearchNull(Map<String, String> map,Map<String, Integer> map2){
 		List<ProjectVO> list = new ArrayList<>();
 		ProjectVO pvo = null;
 		String p_name = map.get("p_name");
 		String p_order = map.get("p_order");
+		int begin = map2.get("begin");
+		int end = map2.get("end");
 		
 		try {
-			String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_state="+0;
+			//String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_state="+0;
+			String sql = "select * from (select rownum r_num, a.* from (select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_state=0) a ) where r_num between ? and ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, p_name);
 			pstmt.setString(2, p_order);
+			pstmt.setInt(3, begin);
+			pstmt.setInt(4, end);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
 				pvo = new ProjectVO();
-				pvo.setP_code(rs.getInt(1));
-				pvo.setP_name(rs.getString(2));
-				pvo.setP_content(rs.getString(3));
-				pvo.setP_start(rs.getString(4));
-				pvo.setP_end(rs.getString(5));
-				pvo.setP_num(rs.getInt(6));
-				pvo.setP_order(rs.getString(7));
+				pvo.setP_code(rs.getInt(2));
+				pvo.setP_name(rs.getString(3));
+				pvo.setP_content(rs.getString(4));
+				pvo.setP_start(rs.getString(5));
+				pvo.setP_end(rs.getString(6));
+				pvo.setP_num(rs.getInt(7));
+				pvo.setP_order(rs.getString(8));
 				list.add(pvo);
 			}
 			
@@ -361,7 +372,7 @@ public class ProjectDAO {
 	}
 	
 	//4. 둘다 값이 있을때
-	public List<ProjectVO> proSearch(Map<String, String> map){
+	public List<ProjectVO> proSearch(Map<String, String> map,Map<String, Integer> map2){
 		List<ProjectVO> list = new ArrayList<>();
 		ProjectVO pvo = null;
 		String p_name = map.get("p_name");
@@ -369,24 +380,32 @@ public class ProjectDAO {
 		String p_start = map.get("p_start");
 		String p_end = map.get("p_end");
 		
+		int begin = map2.get("begin");
+		int end = map2.get("end");
+		
+		//"select * from (select rownum r_num, a.* from (select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_start >= ? and p_end <= ? and p_state=0) a ) where r_num between ? and ?";
+		
 		try {
-			String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_start >= ? and p_end <= ? and p_state="+0;
+			//String sql = "select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_start >= ? and p_end <= ? and p_state=0";
+			String sql = "select * from (select rownum r_num, a.* from (select * from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_start >= ? and p_end <= ? and p_state=0) a ) where r_num between ? and ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, p_name);
 			pstmt.setString(2, p_order);
 			pstmt.setString(3, p_start);
 			pstmt.setString(4, p_end);
+			pstmt.setInt(5, begin);
+			pstmt.setInt(6, end);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
 				pvo = new ProjectVO();
-				pvo.setP_code(rs.getInt(1));
-				pvo.setP_name(rs.getString(2));
-				pvo.setP_content(rs.getString(3));
-				pvo.setP_start(rs.getString(4));
-				pvo.setP_end(rs.getString(5));
-				pvo.setP_num(rs.getInt(6));
-				pvo.setP_order(rs.getString(7));
+				pvo.setP_code(rs.getInt(2));
+				pvo.setP_name(rs.getString(3));
+				pvo.setP_content(rs.getString(4));
+				pvo.setP_start(rs.getString(5));
+				pvo.setP_end(rs.getString(6));
+				pvo.setP_num(rs.getInt(7));
+				pvo.setP_order(rs.getString(8));
 				list.add(pvo);
 			}
 			
@@ -515,4 +534,74 @@ public class ProjectDAO {
 		}
 		return false;
 	}
+	
+	// 검색
+	public int proSearchNullCount(Map<String, String> map){
+		int count = 0;
+		String p_name = map.get("p_name");
+		String p_order = map.get("p_order");
+		try {
+			String sql = "select count(*) from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_state=0";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, p_name);
+			pstmt.setString(2, p_order);
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				count = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("proSearchNullCount 에러 : "+e);
+		}
+		
+		return count;
+	}
+	
+	public int proSearchCount(Map<String, String> map){
+		int count = 0;
+		String p_name = map.get("p_name");
+		String p_order = map.get("p_order");
+		String p_start = map.get("p_start");
+		String p_end = map.get("p_end");
+		try {
+			String sql = "select count(*) from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and p_start >= ? and p_end <= ? and p_state=0";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, p_name);
+			pstmt.setString(2, p_order);
+			pstmt.setString(3, p_start);
+			pstmt.setString(4, p_end);
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				count = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("proSearchCount 에러 : "+e);
+		}
+		
+		return count;
+	}
+	
+	public int proSearchOrCount(Map<String, String> map){
+		int count = 0;
+		String p_name = map.get("p_name");
+		String p_order = map.get("p_order");
+		String p_start = map.get("p_start");
+		String p_end = map.get("p_end");
+		try {
+			String sql = "select count(*) from project where upper(p_name) like upper('%' || ? || '%') and upper(p_order) like upper('%' || ? || '%') and (p_start >= ? or p_end <= ?) and p_state =0 ";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, p_name);
+			pstmt.setString(2, p_order);
+			pstmt.setString(3, p_start);
+			pstmt.setString(4, p_end);
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				count = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("proSearchOrCount 에러 : "+e);
+		}
+		
+		return count;
+	}
+	
 }

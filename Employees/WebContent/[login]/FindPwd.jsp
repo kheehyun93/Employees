@@ -39,10 +39,10 @@ window.onpopstate = function(event) {
 			
 			for (var i = 0; i < input_length; i++) {
 				chk = input.value.charCodeAt(i);
-				if((chk>=65 && chk<=90) || (chk>=97 && chk<=122) || (chk>=48 && chk<=57) || (chk==64) || (chk==95)){
+				if((chk>=65 && chk<=90) || (chk>=97 && chk<=122) || (chk>=48 && chk<=57) || (chk==64) || (chk==95)|| (chk==46)){
 					
 				}else{
-					alert(" _ , @ 외 특수문자나 한글은 입력할 수 없습니다.");
+					alert(" '.' , '@' , '_' 외 특수문자나 한글은 입력할 수 없습니다.");
 					input.value="";
 					return;
 				}
@@ -82,7 +82,6 @@ window.onpopstate = function(event) {
 		});
 		
 		$("#confirmBtn").click(function() {
-			alert($("#email").val());
 			if($("#email").val()==""){
 				alert("이메일을 입력해주세요~");
 			}else{

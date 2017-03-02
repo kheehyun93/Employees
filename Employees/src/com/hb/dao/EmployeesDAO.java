@@ -394,7 +394,32 @@ public class EmployeesDAO {
 	}
 	
 	// emp search
-	public List<EmployeesVO> empSearch(Map<String, String> map){
+	public int empTotalSearchCount(Map<String, String> map){
+		int count = 0;
+		String e_rank = map.get("e_rank");
+		String e_dept = map.get("e_dept");
+		String e_name = map.get("e_name");
+		String e_tel = map.get("e_tel");
+		try {
+			//String sql = "select count(*) from employees where e_state = ?";
+			String sql = "select count(*) from employees where e_rank like '%' || ? || '%' and e_dept like '%' || ? || '%' and e_name like '%' || ? || '%' and e_tel like '%' || ? || '%' and e_state=0";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, e_rank);
+			pstmt.setString(2, e_dept);
+			pstmt.setString(3, e_name);
+			pstmt.setString(4, e_tel);
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				count = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("empTotalSearchCount 에러 : "+e);
+		}
+		
+		System.out.println(count);
+		return count;
+	}
+	public List<EmployeesVO> empSearch(Map<String, String> map,Map<String, Integer> map2){
 		List<EmployeesVO> list = new ArrayList<>();
 		EmployeesVO evo = null;
 		String e_rank = map.get("e_rank");
@@ -402,34 +427,39 @@ public class EmployeesDAO {
 		String e_name = map.get("e_name");
 		String e_tel = map.get("e_tel");
 		
+		int begin = map2.get("begin");
+		int end = map2.get("end");
+		
 		int e_state = 0;
 		
 		try {
-			String sql = "select * from employees where e_rank like '%' || ? || '%' and e_dept like '%' || ? || '%' and e_name like '%' || ? || '%' and e_tel like '%' || ? || '%' and e_state=?";
+			//String sql = "select * from employees where e_rank like '%' || ? || '%' and e_dept like '%' || ? || '%' and e_name like '%' || ? || '%' and e_tel like '%' || ? || '%' and e_state=?";
+			String sql = "select * from (select rownum r_num, a.* from (select * from employees where e_rank like '%' || ? || '%' and e_dept like '%' || ? || '%' and e_name like '%' || ? || '%' and e_tel like '%' || ? || '%' and e_state=0 ) a ) where r_num between ? and ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, e_rank);
 			pstmt.setString(2, e_dept);
 			pstmt.setString(3, e_name);
 			pstmt.setString(4, e_tel);
-			pstmt.setInt(5, e_state);
+			pstmt.setInt(5, begin);
+			pstmt.setInt(6, end);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
 				evo = new EmployeesVO();
-				evo.setE_id(rs.getString(1));
-				evo.setE_idx(rs.getInt(2));
-				evo.setE_name(rs.getString(3));
-				evo.setE_jumin(rs.getString(4));
-				evo.setE_email(rs.getString(5));
-				evo.setE_tel(rs.getString(6));
-				evo.setE_addr(rs.getString(7));
-				evo.setE_post(rs.getString(8));
-				evo.setE_rank(rs.getString(9));
-				evo.setE_dept(rs.getString(10));
-				evo.setE_hire_date(rs.getString(11));
-				evo.setE_img(rs.getString(12));
-				evo.setE_pwd(rs.getString(13));
-				evo.setE_state(rs.getInt(14));
+				evo.setE_id(rs.getString(2));
+				evo.setE_idx(rs.getInt(3));
+				evo.setE_name(rs.getString(4));
+				evo.setE_jumin(rs.getString(5));
+				evo.setE_email(rs.getString(6));
+				evo.setE_tel(rs.getString(7));
+				evo.setE_addr(rs.getString(8));
+				evo.setE_post(rs.getString(9));
+				evo.setE_rank(rs.getString(10));
+				evo.setE_dept(rs.getString(11));
+				evo.setE_hire_date(rs.getString(12));
+				evo.setE_img(rs.getString(13));
+				evo.setE_pwd(rs.getString(14));
+				evo.setE_state(rs.getInt(15));
 				list.add(evo);
 				
 			}
